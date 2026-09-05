@@ -1,0 +1,1 @@
+import {seed,store} from '../data/store.js';seed();console.log(`Seeded demo dataset: ${store.transactions.length} transactions, ${store.alerts.length} alerts, ${store.cases.length} cases.`);console.log('MongoDB fallback mode: data is deterministic and available in-memory for this MVP.');
