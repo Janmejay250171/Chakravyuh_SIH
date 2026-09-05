@@ -235,17 +235,24 @@ export const OverviewDashboard: React.FC = () => {
 
   const handleRefresh = () => {
     setRefreshing(true);
+    setTime(new Date());
 
     setTimeout(() => {
       setRefreshing(false);
     }, 900);
   };
 
+  const istTime = time.toLocaleTimeString("en-IN", {
+    timeZone: "Asia/Kolkata",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+    hour12: false,
+  });
+
   return (
     <div className="min-h-full bg-[#f7f7f5]">
-      {/* Main Content */}
       <div className="mx-auto max-w-[1600px] px-5 py-6 lg:px-8">
-
         {/* TOP COMMAND BAR */}
         <div className="mb-6 flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
           <div>
@@ -284,13 +291,13 @@ export const OverviewDashboard: React.FC = () => {
               </div>
             </div>
 
-            {/* CLOCK */}
+            {/* IST CLOCK */}
             <div className="hidden rounded-xl border border-stone-200 bg-white px-4 py-2.5 shadow-sm sm:block">
               <p className="text-[10px] font-semibold uppercase tracking-wider text-stone-400">
-                UTC Time
+                IST Time
               </p>
               <p className="font-mono text-xs font-semibold text-stone-700">
-                {time.toUTCString().slice(17, 25)}
+                {istTime}
               </p>
             </div>
 
@@ -391,10 +398,8 @@ export const OverviewDashboard: React.FC = () => {
 
         {/* MAIN GRID */}
         <div className="grid grid-cols-1 gap-6 xl:grid-cols-[1.7fr_0.8fr]">
-
           {/* LEFT */}
           <div className="space-y-6">
-
             {/* HIGH RISK TABLE */}
             <div className="overflow-hidden rounded-2xl border border-stone-200 bg-white shadow-sm">
               <div className="flex flex-col gap-4 border-b border-stone-100 p-5 md:flex-row md:items-center md:justify-between">
@@ -413,7 +418,6 @@ export const OverviewDashboard: React.FC = () => {
                   </p>
                 </div>
 
-                {/* SEARCH */}
                 <div className="relative w-full md:w-64">
                   <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-stone-400" />
 
@@ -433,23 +437,18 @@ export const OverviewDashboard: React.FC = () => {
                       <th className="px-5 py-3 text-left text-[10px] font-bold uppercase tracking-wider text-stone-400">
                         Transaction ID
                       </th>
-
                       <th className="px-5 py-3 text-left text-[10px] font-bold uppercase tracking-wider text-stone-400">
                         Source IP
                       </th>
-
                       <th className="px-5 py-3 text-left text-[10px] font-bold uppercase tracking-wider text-stone-400">
                         Cluster
                       </th>
-
                       <th className="px-5 py-3 text-left text-[10px] font-bold uppercase tracking-wider text-stone-400">
                         Amount
                       </th>
-
                       <th className="px-5 py-3 text-left text-[10px] font-bold uppercase tracking-wider text-stone-400">
                         Geo ASN
                       </th>
-
                       <th className="px-5 py-3 text-left text-[10px] font-bold uppercase tracking-wider text-stone-400">
                         Risk
                       </th>
@@ -466,7 +465,6 @@ export const OverviewDashboard: React.FC = () => {
                         <td className="px-5 py-4">
                           <div className="flex items-center gap-2">
                             <Wallet className="h-3.5 w-3.5 text-orange-500" />
-
                             <span className="font-mono text-xs font-semibold text-orange-700">
                               {tx.txid}
                             </span>
@@ -550,7 +548,6 @@ export const OverviewDashboard: React.FC = () => {
               </div>
 
               <div className="relative h-[220px] overflow-hidden rounded-xl border border-stone-100 bg-gradient-to-br from-stone-50 to-white">
-                {/* Graph Lines */}
                 <svg
                   viewBox="0 0 900 280"
                   className="absolute inset-0 h-full w-full"
@@ -558,8 +555,16 @@ export const OverviewDashboard: React.FC = () => {
                 >
                   <defs>
                     <linearGradient id="lineGradient">
-                      <stop offset="0%" stopColor="#f97316" stopOpacity="0.3" />
-                      <stop offset="100%" stopColor="#3b82f6" stopOpacity="0.4" />
+                      <stop
+                        offset="0%"
+                        stopColor="#f97316"
+                        stopOpacity="0.3"
+                      />
+                      <stop
+                        offset="100%"
+                        stopColor="#3b82f6"
+                        stopOpacity="0.4"
+                      />
                     </linearGradient>
                   </defs>
 
@@ -618,7 +623,6 @@ export const OverviewDashboard: React.FC = () => {
                   />
                 </svg>
 
-                {/* Nodes */}
                 <GraphNode
                   label="P2P-2"
                   className="left-[9%] top-[55%]"
@@ -666,7 +670,6 @@ export const OverviewDashboard: React.FC = () => {
 
           {/* RIGHT SIDEBAR */}
           <div className="space-y-6">
-
             {/* THREAT LEVEL */}
             <div className="overflow-hidden rounded-2xl border border-stone-200 bg-white shadow-sm">
               <div className="border-b border-stone-100 p-5">
