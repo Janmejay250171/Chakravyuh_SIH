@@ -1,4 +1,3 @@
-import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { LandingView } from './components/modules/LandingView';
 import { AppLayout } from './components/layout/AppLayout';

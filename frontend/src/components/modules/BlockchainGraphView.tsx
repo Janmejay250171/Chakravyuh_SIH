@@ -840,7 +840,7 @@ export const BlockchainGraphView: React.FC = () => {
 
       updateTimestamp();
 
-      setIsolating(false);
+      setIsIsolating(false);
 
       setStatusMessage(
         'Sub-graph isolated successfully. Non-core nodes are disconnected from the active investigation graph.'
@@ -921,13 +921,6 @@ export const BlockchainGraphView: React.FC = () => {
      GET NODE BY ID
   ======================================================= */
 
-  const getNode = (
-    id: string
-  ) =>
-    graphNodes.find(
-      (node) =>
-        node.id === id
-    );
 
   /* =======================================================
      GRAPH CANVAS COMPONENT

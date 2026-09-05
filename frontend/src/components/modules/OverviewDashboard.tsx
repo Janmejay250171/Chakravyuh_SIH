@@ -1,13 +1,10 @@
 import React, { useEffect, useMemo, useState } from "react";
 import {
   Activity,
-  AlertTriangle,
-  ArrowDownRight,
   ArrowUpRight,
   Bitcoin,
   Boxes,
   CheckCircle2,
-  CircleDollarSign,
   Clock3,
   Database,
   Eye,
@@ -17,7 +14,6 @@ import {
   RefreshCw,
   Search,
   ShieldAlert,
-  ShieldCheck,
   TrendingUp,
   Wallet,
   Zap,
