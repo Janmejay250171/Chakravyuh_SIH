@@ -15,6 +15,10 @@ import {
   FileText,
   Database,
   Printer,
+  ArrowLeft,
+  BarChart3,
+  FileWarning,
+  UserCheck,
 } from 'lucide-react';
 
 type RiskLevel = 'CRITICAL' | 'HIGH' | 'MEDIUM' | 'LOW';
@@ -38,6 +42,12 @@ type Dossier = {
 };
 
 type ActiveTab = 'overview' | 'clusters' | 'xai';
+
+type XaiSection =
+  | 'feature-attribution'
+  | 'risk-evidence'
+  | 'analyst-report'
+  | null;
 
 export const InvestigationsView: React.FC = () => {
   const [dossiers, setDossiers] = useState<Dossier[]>([
@@ -118,6 +128,9 @@ export const InvestigationsView: React.FC = () => {
   const [activeTab, setActiveTab] =
     useState<ActiveTab>('overview');
 
+  const [activeXaiSection, setActiveXaiSection] =
+    useState<XaiSection>(null);
+
   const [newDossierTitle, setNewDossierTitle] =
     useState('');
 
@@ -173,7 +186,6 @@ export const InvestigationsView: React.FC = () => {
     setSuccessMessage('');
     setShowCreatePanel(true);
 
-    // Scroll to creation panel after it renders
     setTimeout(() => {
       document
         .getElementById('create-dossier-panel')
@@ -222,28 +234,19 @@ export const InvestigationsView: React.FC = () => {
 
       const newDossier: Dossier = {
         id: newId,
-
         title: newDossierTitle.trim(),
-
         volume: '0.00 BTC',
-
         risk: newRisk,
-
         status: 'UNDER REVIEW',
-
         transactions: newTransaction.trim()
           ? 1
           : 0,
-
         networkAnalysis:
           'Awaiting network intelligence analysis',
-
         confidence:
           'Pending AI analysis',
-
         analyst:
           'Unassigned',
-
         route: newTransaction.trim()
           ? `Seed reference: ${newTransaction.trim()}`
           : 'No seed transaction linked yet',
@@ -255,17 +258,14 @@ export const InvestigationsView: React.FC = () => {
       ]);
 
       setSelectedId(newId);
-
       setActiveTab('overview');
+      setActiveXaiSection(null);
 
       setIsCreating(false);
-
       setShowCreatePanel(false);
 
       setNewDossierTitle('');
-
       setNewTransaction('');
-
       setNewRisk('HIGH');
 
       setSuccessMessage(
@@ -288,8 +288,15 @@ export const InvestigationsView: React.FC = () => {
     }, 3000);
   };
 
+  const openXaiSection = (
+    section: XaiSection
+  ) => {
+    setActiveXaiSection(section);
+  };
 
-  // PRINT DOSSIER FUNCTION
+  const closeXaiSection = () => {
+    setActiveXaiSection(null);
+  };
 
   const printDossier = () => {
     const printWindow = window.open(
@@ -302,7 +309,8 @@ export const InvestigationsView: React.FC = () => {
       return;
     }
 
-    const currentDate = new Date().toLocaleString();
+    const currentDate =
+      new Date().toLocaleString();
 
     printWindow.document.write(`
       <!DOCTYPE html>
@@ -446,7 +454,6 @@ export const InvestigationsView: React.FC = () => {
 
           </div>
 
-
           <div class="section">
 
             <div class="section-title">
@@ -465,7 +472,6 @@ export const InvestigationsView: React.FC = () => {
                 </div>
               </div>
 
-
               <div class="card">
                 <div class="label">
                   Investigation Status
@@ -476,7 +482,6 @@ export const InvestigationsView: React.FC = () => {
                 </div>
               </div>
 
-
               <div class="card">
                 <div class="label">
                   Transaction Volume
@@ -486,7 +491,6 @@ export const InvestigationsView: React.FC = () => {
                   ${selectedDossier.volume}
                 </div>
               </div>
-
 
               <div class="card">
                 <div class="label">
@@ -501,7 +505,6 @@ export const InvestigationsView: React.FC = () => {
             </div>
 
           </div>
-
 
           <div class="section">
 
@@ -521,7 +524,6 @@ export const InvestigationsView: React.FC = () => {
                 </div>
               </div>
 
-
               <div class="card">
                 <div class="label">
                   Risk Confidence
@@ -532,7 +534,6 @@ export const InvestigationsView: React.FC = () => {
                 </div>
               </div>
 
-
               <div class="card">
                 <div class="label">
                   Assigned Analyst
@@ -542,7 +543,6 @@ export const InvestigationsView: React.FC = () => {
                   ${selectedDossier.analyst}
                 </div>
               </div>
-
 
               <div class="card">
                 <div class="label">
@@ -558,7 +558,6 @@ export const InvestigationsView: React.FC = () => {
 
           </div>
 
-
           <div class="footer">
 
             CONFIDENTIAL INVESTIGATION INTELLIGENCE DOCUMENT
@@ -568,7 +567,6 @@ export const InvestigationsView: React.FC = () => {
             Generated from CHAKRAVYUH forensic intelligence system.
 
           </div>
-
 
           <script>
             window.onload = function () {
@@ -582,7 +580,6 @@ export const InvestigationsView: React.FC = () => {
 
     printWindow.document.close();
   };
-
 
   return (
     <div className="max-w-7xl mx-auto text-stone-900 font-sans space-y-5">
@@ -696,32 +693,28 @@ export const InvestigationsView: React.FC = () => {
 
           <div className="px-6 py-5 border-b border-stone-200 flex items-center justify-between">
 
-            <div>
+            <div className="flex items-center gap-2">
 
-              <div className="flex items-center gap-2">
+              <div className="w-8 h-8 bg-amber-50 border border-amber-200 flex items-center justify-center">
 
-                <div className="w-8 h-8 bg-amber-50 border border-amber-200 flex items-center justify-center">
+                <Plus className="w-4 h-4 text-amber-700" />
 
-                  <Plus className="w-4 h-4 text-amber-700" />
+              </div>
 
-                </div>
+              <div>
 
-                <div>
+                <h3 className="font-bold text-sm">
 
-                  <h3 className="font-bold text-sm">
+                  Initialize New Investigation Dossier
 
-                    Initialize New Investigation Dossier
+                </h3>
 
-                  </h3>
+                <p className="text-xs text-stone-500 mt-1">
 
-                  <p className="text-xs text-stone-500 mt-1">
+                  Create a new investigation record and
+                  assign initial intelligence context.
 
-                    Create a new investigation record and
-                    assign initial intelligence context.
-
-                  </p>
-
-                </div>
+                </p>
 
               </div>
 
@@ -929,6 +922,8 @@ export const InvestigationsView: React.FC = () => {
 
                     setActiveTab('overview');
 
+                    setActiveXaiSection(null);
+
                     setSuccessMessage('');
 
                   }}
@@ -1050,8 +1045,6 @@ export const InvestigationsView: React.FC = () => {
 
               <div className="flex flex-wrap items-center gap-2 self-start">
 
-                {/* PRINT DOSSIER BUTTON */}
-
                 <button
                   type="button"
                   onClick={printDossier}
@@ -1072,9 +1065,10 @@ export const InvestigationsView: React.FC = () => {
 
                   <button
                     type="button"
-                    onClick={() =>
-                      setActiveTab('overview')
-                    }
+                    onClick={() => {
+                      setActiveTab('overview');
+                      setActiveXaiSection(null);
+                    }}
                     className={`px-4 py-2 text-[10px] font-mono ${
                       activeTab === 'overview'
                         ? 'bg-stone-100 font-bold text-stone-900'
@@ -1089,9 +1083,10 @@ export const InvestigationsView: React.FC = () => {
 
                   <button
                     type="button"
-                    onClick={() =>
-                      setActiveTab('clusters')
-                    }
+                    onClick={() => {
+                      setActiveTab('clusters');
+                      setActiveXaiSection(null);
+                    }}
                     className={`px-4 py-2 text-[10px] font-mono border-l border-stone-200 ${
                       activeTab === 'clusters'
                         ? 'bg-stone-100 font-bold text-stone-900'
@@ -1106,9 +1101,10 @@ export const InvestigationsView: React.FC = () => {
 
                   <button
                     type="button"
-                    onClick={() =>
-                      setActiveTab('xai')
-                    }
+                    onClick={() => {
+                      setActiveTab('xai');
+                      setActiveXaiSection(null);
+                    }}
                     className={`px-4 py-2 text-[10px] font-mono border-l border-stone-200 ${
                       activeTab === 'xai'
                         ? 'bg-stone-100 font-bold text-stone-900'
@@ -1365,114 +1361,29 @@ export const InvestigationsView: React.FC = () => {
 
             <div className="p-6">
 
-              <div className="border border-stone-200 p-6">
+              {/* XAI MAIN MENU */}
 
-                <div className="flex items-center gap-3">
+              {!activeXaiSection && (
 
-                  <Brain className="w-5 h-5 text-amber-700" />
+                <div className="border border-stone-200 p-6">
 
-                  <div>
+                  <div className="flex items-center gap-3">
 
-                    <div className="font-semibold text-sm">
-
-                      Explainable Intelligence Audit
-
-                    </div>
-
-                    <div className="text-xs text-stone-500 mt-1">
-
-                      AI evidence references associated with{' '}
-
-                      {selectedDossier.id}
-
-                    </div>
-
-                  </div>
-
-                </div>
-
-
-                <div className="mt-6 space-y-3">
-
-                  <div className="border border-stone-200 p-4 flex items-center justify-between">
-
-                    <div className="flex items-center gap-3">
-
-                      <Eye className="w-4 h-4 text-amber-700" />
-
-                      <span className="text-sm">
-
-                        Feature Attribution
-
-                      </span>
-
-                    </div>
-
-                    <ChevronRight className="w-4 h-4 text-stone-400" />
-
-                  </div>
-
-
-                  <div className="border border-stone-200 p-4 flex items-center justify-between">
-
-                    <div className="flex items-center gap-3">
-
-                      <ShieldAlert className="w-4 h-4 text-amber-700" />
-
-                      <span className="text-sm">
-
-                        Risk Evidence
-
-                      </span>
-
-                    </div>
-
-                    <ChevronRight className="w-4 h-4 text-stone-400" />
-
-                  </div>
-
-
-                  <div className="border border-stone-200 p-4 flex items-center justify-between">
-
-                    <div className="flex items-center gap-3">
-
-                      <FileText className="w-4 h-4 text-amber-700" />
-
-                      <span className="text-sm">
-
-                        Analyst Report
-
-                      </span>
-
-                    </div>
-
-                    <ChevronRight className="w-4 h-4 text-stone-400" />
-
-                  </div>
-
-                </div>
-
-
-                {selectedDossier.status ===
-                  'UNDER REVIEW' && (
-
-                  <div className="mt-5 border border-amber-200 bg-amber-50 p-4 flex items-start gap-3">
-
-                    <Database className="w-4 h-4 text-amber-700 mt-0.5" />
+                    <Brain className="w-5 h-5 text-amber-700" />
 
                     <div>
 
-                      <div className="text-xs font-semibold text-amber-900">
+                      <div className="font-semibold text-sm">
 
-                        Analysis Pending
+                        Explainable Intelligence Audit
 
                       </div>
 
-                      <div className="text-xs text-amber-800 mt-1">
+                      <div className="text-xs text-stone-500 mt-1">
 
-                        AI explainability data will be generated
-                        when this dossier receives linked
-                        transaction intelligence.
+                        AI evidence references associated with{' '}
+
+                        {selectedDossier.id}
 
                       </div>
 
@@ -1480,9 +1391,622 @@ export const InvestigationsView: React.FC = () => {
 
                   </div>
 
-                )}
 
-              </div>
+                  <div className="mt-6 space-y-3">
+
+
+                    {/* FEATURE ATTRIBUTION */}
+
+                    <button
+                      type="button"
+                      onClick={() =>
+                        openXaiSection(
+                          'feature-attribution'
+                        )
+                      }
+                      className="w-full border border-stone-200 p-4 flex items-center justify-between text-left hover:bg-stone-50 hover:border-amber-300 transition-all group"
+                    >
+
+                      <div className="flex items-center gap-3">
+
+                        <Eye className="w-4 h-4 text-amber-700" />
+
+                        <div>
+
+                          <div className="text-sm font-medium">
+
+                            Feature Attribution
+
+                          </div>
+
+                          <div className="text-[10px] text-stone-400 mt-1">
+
+                            View AI model feature influence
+
+                          </div>
+
+                        </div>
+
+                      </div>
+
+                      <ChevronRight className="w-4 h-4 text-stone-400 group-hover:text-amber-700" />
+
+                    </button>
+
+
+                    {/* RISK EVIDENCE */}
+
+                    <button
+                      type="button"
+                      onClick={() =>
+                        openXaiSection(
+                          'risk-evidence'
+                        )
+                      }
+                      className="w-full border border-stone-200 p-4 flex items-center justify-between text-left hover:bg-stone-50 hover:border-amber-300 transition-all group"
+                    >
+
+                      <div className="flex items-center gap-3">
+
+                        <ShieldAlert className="w-4 h-4 text-amber-700" />
+
+                        <div>
+
+                          <div className="text-sm font-medium">
+
+                            Risk Evidence
+
+                          </div>
+
+                          <div className="text-[10px] text-stone-400 mt-1">
+
+                            View supporting intelligence signals
+
+                          </div>
+
+                        </div>
+
+                      </div>
+
+                      <ChevronRight className="w-4 h-4 text-stone-400 group-hover:text-amber-700" />
+
+                    </button>
+
+
+                    {/* ANALYST REPORT */}
+
+                    <button
+                      type="button"
+                      onClick={() =>
+                        openXaiSection(
+                          'analyst-report'
+                        )
+                      }
+                      className="w-full border border-stone-200 p-4 flex items-center justify-between text-left hover:bg-stone-50 hover:border-amber-300 transition-all group"
+                    >
+
+                      <div className="flex items-center gap-3">
+
+                        <FileText className="w-4 h-4 text-amber-700" />
+
+                        <div>
+
+                          <div className="text-sm font-medium">
+
+                            Analyst Report
+
+                          </div>
+
+                          <div className="text-[10px] text-stone-400 mt-1">
+
+                            View investigation analyst findings
+
+                          </div>
+
+                        </div>
+
+                      </div>
+
+                      <ChevronRight className="w-4 h-4 text-stone-400 group-hover:text-amber-700" />
+
+                    </button>
+
+                  </div>
+
+
+                  {selectedDossier.status ===
+                    'UNDER REVIEW' && (
+
+                    <div className="mt-5 border border-amber-200 bg-amber-50 p-4 flex items-start gap-3">
+
+                      <Database className="w-4 h-4 text-amber-700 mt-0.5" />
+
+                      <div>
+
+                        <div className="text-xs font-semibold text-amber-900">
+
+                          Analysis Pending
+
+                        </div>
+
+                        <div className="text-xs text-amber-800 mt-1">
+
+                          AI explainability data will be generated
+                          when this dossier receives linked
+                          transaction intelligence.
+
+                        </div>
+
+                      </div>
+
+                    </div>
+
+                  )}
+
+                </div>
+
+              )}
+
+
+              {/* FEATURE ATTRIBUTION PAGE */}
+
+              {activeXaiSection ===
+                'feature-attribution' && (
+
+                <div className="border border-stone-200">
+
+                  <div className="px-6 py-5 border-b border-stone-200 flex items-center gap-4">
+
+                    <button
+                      type="button"
+                      onClick={closeXaiSection}
+                      className="w-9 h-9 border border-stone-200 hover:bg-stone-50 flex items-center justify-center"
+                    >
+
+                      <ArrowLeft className="w-4 h-4" />
+
+                    </button>
+
+                    <div>
+
+                      <div className="flex items-center gap-2">
+
+                        <Eye className="w-5 h-5 text-amber-700" />
+
+                        <h4 className="font-bold text-sm">
+
+                          Feature Attribution
+
+                        </h4>
+
+                      </div>
+
+                      <p className="text-xs text-stone-500 mt-1">
+
+                        AI model decision factors for{' '}
+
+                        {selectedDossier.id}
+
+                      </p>
+
+                    </div>
+
+                  </div>
+
+
+                  <div className="p-6 space-y-4">
+
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+
+                      <div className="border border-stone-200 p-5">
+
+                        <div className="text-[10px] font-mono text-stone-400 uppercase">
+
+                          Network Pattern
+
+                        </div>
+
+                        <div className="font-bold text-amber-700 text-lg mt-3">
+
+                          42.8%
+
+                        </div>
+
+                        <div className="text-xs text-stone-500 mt-2">
+
+                          Influence on AI decision
+
+                        </div>
+
+                      </div>
+
+
+                      <div className="border border-stone-200 p-5">
+
+                        <div className="text-[10px] font-mono text-stone-400 uppercase">
+
+                          Transaction Behaviour
+
+                        </div>
+
+                        <div className="font-bold text-rose-700 text-lg mt-3">
+
+                          31.4%
+
+                        </div>
+
+                        <div className="text-xs text-stone-500 mt-2">
+
+                          Influence on AI decision
+
+                        </div>
+
+                      </div>
+
+
+                      <div className="border border-stone-200 p-5">
+
+                        <div className="text-[10px] font-mono text-stone-400 uppercase">
+
+                          Geo-ASN Correlation
+
+                        </div>
+
+                        <div className="font-bold text-blue-700 text-lg mt-3">
+
+                          25.8%
+
+                        </div>
+
+                        <div className="text-xs text-stone-500 mt-2">
+
+                          Influence on AI decision
+
+                        </div>
+
+                      </div>
+
+                    </div>
+
+
+                    <div className="border border-stone-200 p-5">
+
+                      <div className="flex items-center gap-2">
+
+                        <BarChart3 className="w-4 h-4 text-amber-700" />
+
+                        <div className="font-semibold text-sm">
+
+                          Model Explanation
+
+                        </div>
+
+                      </div>
+
+                      <p className="text-sm text-stone-600 mt-4 leading-relaxed">
+
+                        The AI risk classification for{' '}
+
+                        <strong>
+                          {selectedDossier.title}
+                        </strong>
+
+                        {' '}is primarily influenced by
+                        detected network behaviour, transaction
+                        relationships and cross-network routing
+                        patterns.
+
+                      </p>
+
+                    </div>
+
+                  </div>
+
+                </div>
+
+              )}
+
+
+              {/* RISK EVIDENCE PAGE */}
+
+              {activeXaiSection ===
+                'risk-evidence' && (
+
+                <div className="border border-stone-200">
+
+                  <div className="px-6 py-5 border-b border-stone-200 flex items-center gap-4">
+
+                    <button
+                      type="button"
+                      onClick={closeXaiSection}
+                      className="w-9 h-9 border border-stone-200 hover:bg-stone-50 flex items-center justify-center"
+                    >
+
+                      <ArrowLeft className="w-4 h-4" />
+
+                    </button>
+
+                    <div>
+
+                      <div className="flex items-center gap-2">
+
+                        <ShieldAlert className="w-5 h-5 text-amber-700" />
+
+                        <h4 className="font-bold text-sm">
+
+                          Risk Evidence
+
+                        </h4>
+
+                      </div>
+
+                      <p className="text-xs text-stone-500 mt-1">
+
+                        Intelligence evidence supporting the risk
+                        classification
+
+                      </p>
+
+                    </div>
+
+                  </div>
+
+
+                  <div className="p-6 space-y-3">
+
+                    <div className="border border-rose-200 bg-rose-50/40 p-5">
+
+                      <div className="flex items-center gap-3">
+
+                        <FileWarning className="w-5 h-5 text-rose-700" />
+
+                        <div>
+
+                          <div className="font-semibold text-sm">
+
+                            Risk Classification
+
+                          </div>
+
+                          <div className="text-xs text-stone-500 mt-1">
+
+                            Current priority assessment
+
+                          </div>
+
+                        </div>
+
+                      </div>
+
+                      <div className="mt-4 text-xl font-bold text-rose-700">
+
+                        {selectedDossier.risk}
+
+                      </div>
+
+                    </div>
+
+
+                    <div className="border border-stone-200 p-5">
+
+                      <div className="text-[10px] font-mono uppercase text-stone-400">
+
+                        Network Evidence
+
+                      </div>
+
+                      <div className="font-semibold text-sm mt-3">
+
+                        {selectedDossier.networkAnalysis}
+
+                      </div>
+
+                    </div>
+
+
+                    <div className="border border-stone-200 p-5">
+
+                      <div className="text-[10px] font-mono uppercase text-stone-400">
+
+                        Routing Evidence
+
+                      </div>
+
+                      <div className="font-semibold text-sm mt-3">
+
+                        {selectedDossier.route}
+
+                      </div>
+
+                    </div>
+
+
+                    <div className="border border-stone-200 p-5">
+
+                      <div className="text-[10px] font-mono uppercase text-stone-400">
+
+                        Linked Intelligence Nodes
+
+                      </div>
+
+                      <div className="font-mono text-xl font-bold mt-3">
+
+                        {selectedDossier.transactions}
+
+                      </div>
+
+                    </div>
+
+                  </div>
+
+                </div>
+
+              )}
+
+
+              {/* ANALYST REPORT PAGE */}
+
+              {activeXaiSection ===
+                'analyst-report' && (
+
+                <div className="border border-stone-200">
+
+                  <div className="px-6 py-5 border-b border-stone-200 flex items-center gap-4">
+
+                    <button
+                      type="button"
+                      onClick={closeXaiSection}
+                      className="w-9 h-9 border border-stone-200 hover:bg-stone-50 flex items-center justify-center"
+                    >
+
+                      <ArrowLeft className="w-4 h-4" />
+
+                    </button>
+
+                    <div>
+
+                      <div className="flex items-center gap-2">
+
+                        <FileText className="w-5 h-5 text-amber-700" />
+
+                        <h4 className="font-bold text-sm">
+
+                          Analyst Report
+
+                        </h4>
+
+                      </div>
+
+                      <p className="text-xs text-stone-500 mt-1">
+
+                        Investigation findings and analyst review
+
+                      </p>
+
+                    </div>
+
+                  </div>
+
+
+                  <div className="p-6 space-y-5">
+
+                    <div className="border border-stone-200 p-5">
+
+                      <div className="flex items-center gap-3">
+
+                        <UserCheck className="w-5 h-5 text-amber-700" />
+
+                        <div>
+
+                          <div className="text-[10px] font-mono uppercase text-stone-400">
+
+                            Assigned Analyst
+
+                          </div>
+
+                          <div className="font-bold text-sm mt-1">
+
+                            {selectedDossier.analyst}
+
+                          </div>
+
+                        </div>
+
+                      </div>
+
+                    </div>
+
+
+                    <div className="border border-stone-200 p-5">
+
+                      <div className="text-[10px] font-mono uppercase text-stone-400">
+
+                        Investigation Summary
+
+                      </div>
+
+                      <p className="text-sm text-stone-600 leading-relaxed mt-3">
+
+                        Investigation dossier{' '}
+
+                        <strong>
+                          {selectedDossier.id}
+                        </strong>
+
+                        {' '}for{' '}
+
+                        <strong>
+                          {selectedDossier.title}
+                        </strong>
+
+                        {' '}contains{' '}
+
+                        {selectedDossier.transactions}
+
+                        {' '}linked intelligence nodes with a
+                        current risk classification of{' '}
+
+                        <strong>
+                          {selectedDossier.risk}
+                        </strong>
+
+                        .
+
+                      </p>
+
+                    </div>
+
+
+                    <div className="border border-stone-200 p-5">
+
+                      <div className="text-[10px] font-mono uppercase text-stone-400">
+
+                        Analyst Assessment
+
+                      </div>
+
+                      <p className="text-sm text-stone-600 leading-relaxed mt-3">
+
+                        Current intelligence indicates{' '}
+
+                        {selectedDossier.networkAnalysis.toLowerCase()}
+
+                        . The routing path identified as{' '}
+
+                        <strong>
+                          {selectedDossier.route}
+                        </strong>
+
+                        {' '}requires continued monitoring and
+                        correlation with incoming blockchain and
+                        network intelligence.
+
+                      </p>
+
+                    </div>
+
+
+                    <div className="border border-emerald-200 bg-emerald-50 p-5">
+
+                      <div className="text-[10px] font-mono uppercase text-emerald-700">
+
+                        AI Risk Confidence
+
+                      </div>
+
+                      <div className="text-2xl font-bold text-emerald-700 mt-2">
+
+                        {selectedDossier.confidence}
+
+                      </div>
+
+                    </div>
+
+                  </div>
+
+                </div>
+
+              )}
 
             </div>
 
